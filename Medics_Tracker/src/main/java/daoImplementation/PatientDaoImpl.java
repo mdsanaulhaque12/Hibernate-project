@@ -7,21 +7,24 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import utils.HibernateUtil;
 
+import javax.persistence.Query;
 import java.util.List;
 import java.util.Scanner;
 
 public class PatientDaoImpl implements PatientDao {
 
-    public void savePatient(Patient patient) {
+    public boolean savePatient(Patient patient) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.save(patient);
             transaction.commit();
+            return true;
         } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
             e.printStackTrace();
+            System.out.println("patient could not saved");
         }
+        return false;
     }
 
 
@@ -68,5 +71,27 @@ public class PatientDaoImpl implements PatientDao {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Patient validateLogin(String username, String password) {
+        Transaction transaction = null;
+        Patient patient = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+
+            // Query to validate login
+            String hql = "FROM Patient WHERE username = :username AND password = :password";
+            Query query = session.createQuery(hql);
+            query.setParameter("username", username);
+            query.setParameter("password", password);
+
+            patient = (Patient) query.getSingleResult();
+
+            transaction.commit();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return patient;
     }
 }

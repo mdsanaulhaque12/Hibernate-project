@@ -182,20 +182,74 @@ public class AllOperations {
         d.updateDoctor(updatedDoctor);
 
     }
+    static boolean confirmAccountDelete(String user,String pass){
+        PatientDaoImpl patientDao= new PatientDaoImpl();
+        Patient patient = patientDao.validateLogin(user,pass);
+        if(patient !=null){return true;}
+        return false;
+    }
+    static void loginAsPatient() {
+        System.out.println("Enter your username: ");
+        String username = sc.nextLine();
 
+        System.out.println("Enter your password: ");
+        String password = sc.nextLine();
+
+        PatientDaoImpl patientDao= new PatientDaoImpl();
+        Patient patient = patientDao.validateLogin(username,password);
+
+        if (patient != null) {
+            System.out.println("Login successful! Welcome, " + patient.getUsername());
+            patient();
+        } else {
+            System.out.println("Invalid credentials, please try again.");
+        }
+    }
 
     //all patient operations
+    public static void registerNewPatient(){
+
+            System.out.println("enter patient first name ");
+            String firstName = sc.nextLine();
+
+            System.out.println("Enter Patient Last Name:");
+            String lastName = sc.nextLine();
+
+            System.out.println("Enter Patient username:");
+            String username= sc.nextLine();
+
+            System.out.println("Enter Patient password:");
+            String password = sc.nextLine();
+
+            Patient newPatient = new Patient();
+            newPatient.setFirstName(firstName);
+            newPatient.setLastName(lastName);
+        newPatient.setUsername(username); // Correct for username
+        newPatient.setPassword(password); // Correct for password
+
+             // Persist patient and appointment to the database
+             PatientDaoImpl patientDao = new PatientDaoImpl();
+             if(patientDao.savePatient(newPatient)){
+        System.out.println("new user register successfully");
+        System.out.println("login as existing patient user");
+        mainOps();}
+             else{
+                 System.out.println("new registration failed  try again ");
+                 registerNewPatient();
+             }
+    }
     public static void patient() {
+        System.out.println("login successfullly ");
         while (true) {
             System.out.println("Patient Dashboard");
-            System.out.println("1. Save Patient\n2. View Patients\n3. Delete Patient\n4. Update Patient\n5. View Patient by ID\n6. Back to Main Menu");
+            System.out.println("/*1.check prescription */ \n2. View all patient detail\n3. Delete ur account\n4. Update your details \n5. View ur details \n6. Back to Main Menu");
 
             int input = sc.nextInt();
             sc.nextLine();
 
             switch (input) {
                 case 1:
-                    createPatient();
+                    //presciption()
                     break;
                 case 2:
                     viewAllPatients();
@@ -341,8 +395,8 @@ public class AllOperations {
 
     private static void deletePatient(){
         System.out.println("=====================================");
-        System.out.println("delete patient by id");
-        System.out.println("enter patien id for deletion");
+        System.out.println("delete your account");
+        System.out.println("enter patien id to confirm deletion");
         long id=sc.nextLong();
         sc.nextLine();
 
@@ -351,12 +405,16 @@ public class AllOperations {
         patient=p.getPatientById(id);
         System.out.println("are you sure you want to delete enter yes or no");
         String s=sc.nextLine();
-        if(s.equalsIgnoreCase("yes")){
+        System.out.println("eneter your username to confirm deletion ");
+        String user=sc.nextLine();
+        System.out.println("eneter your  password to confirm deletion ");
+        String pass= sc.nextLine();
+        if(s.equalsIgnoreCase("yes" )&& confirmAccountDelete(user,pass)){
         if(patient!=null){
             p.deletePatient(patient);
             System.out.println("patient deleted successfully");
         }else{
-            System.out.println("invalid it patient not found enter correctly and try again");
+            System.out.println("invalid user not found enter correct details and try again");
         }
         }else {
             System.out.println("deletion cancelled ");

@@ -5,8 +5,7 @@ import java.util.Scanner;
 
 import main.AllOperations;
 
-import static main.AllOperations.adminLogin;
-import static main.AllOperations.patient;
+import static main.AllOperations.*;
 
 public class main {
     private static Scanner sc = new Scanner(System.in); // Single scanner instance
@@ -18,7 +17,7 @@ public class main {
 
     static void mainOps() {
         while (true) {
-            System.out.println("Press 1. Admin \n2. Patient \n3. Quit");
+            System.out.println("welcome to medics application \n1. Doctor login  \n2.existing Patient user login \n3.register new patient user \n4. Quit");
             int choice = sc.nextInt();
             sc.nextLine();  // Consume newline
 
@@ -27,9 +26,12 @@ public class main {
                     adminLogin();
                     break;
                 case 2:
-                    patient();
+                    loginAsPatient();
                     break;
                 case 3:
+                    registerNewPatient();
+                    break;
+                case 4:
                     System.out.println("Exiting...");
                     System.exit(0);
                 default:
